@@ -12,11 +12,9 @@ on run argv
     set large    to exportedpath & "large/"    & pathname
     set fullsize to exportedpath & "fullsize/" & pathname
 
-    set themasters   to (POSIX file master)   as alias
-    set thethumbs    to (POSIX file thumbs)   as alias
-    set themediums   to (POSIX file medium)   as alias
-    set thelarges    to (POSIX file large)    as alias
-    set thefullsizes to (POSIX file fullsize) as alias
+    tell application "Aperture"
+        activate
+    end tell
 
     set pathparts to splitstring(pathname,"/")
     set theyear to item 1 of pathparts
@@ -24,22 +22,30 @@ on run argv
     set themonth to integertomonthstring(monthinteger)
     set theproject to item 3 of pathparts
 
-    tell application "Aperture"
-        activate
-    end tell
+    try
+        set themasters   to (POSIX file master)   as alias
+        set thethumbs    to (POSIX file thumbs)   as alias
+        set themediums   to (POSIX file medium)   as alias
+        set thelarges    to (POSIX file large)    as alias
+        set thefullsizes to (POSIX file fullsize) as alias
 
-    tell application "Finder"
-        activate
-        open themasters
-        my opennewtab()
-        set target of front window to thethumbs
-        my opennewtab()
-        set target of front window to themediums
-        my opennewtab()
-        set target of front window to thelarges
-        my opennewtab()
-        set target of front window to thefullsizes
-    end tell
+
+        tell application "Finder"
+            activate
+            open themasters
+            my opennewtab()
+            set target of front window to thethumbs
+            my opennewtab()
+            set target of front window to themediums
+            my opennewtab()
+            set target of front window to thelarges
+            my opennewtab()
+            set target of front window to thefullsizes
+        end tell
+
+    on error
+        log "Project not exported?"
+    end try
 
     tell application "Aperture"
         tell folder theyear
@@ -49,7 +55,9 @@ on run argv
         end tell
     end tell
 
-return master
+    set thecommand to "check-images /Users/iain/Pictures/Published/large | grep \"" & pathname & "\""
+    set thefiles to do shell script thecommand
+    return thefiles
 end run
 
 on opennewtab()
