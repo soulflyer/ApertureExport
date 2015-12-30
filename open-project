@@ -12,9 +12,9 @@ on run argv
     set large    to exportedpath & "large/"    & pathname
     set fullsize to exportedpath & "fullsize/" & pathname
 
-    tell application "Aperture"
-        activate
-    end tell
+    -- tell application "Aperture"
+    --     activate
+    -- end tell
 
     set pathparts to splitstring(pathname,"/")
     set theyear to item 1 of pathparts
@@ -43,6 +43,7 @@ on run argv
             tell application "Finder"
                 activate
                 open themasters
+                set bounds of front window to {400, 0, 1400, 800}
                 my opennewtab()
                 set target of front window to thethumbs
                 my opennewtab()
